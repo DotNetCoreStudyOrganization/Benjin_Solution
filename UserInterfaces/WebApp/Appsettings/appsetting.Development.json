@@ -1,0 +1,6 @@
+{
+  "MssqlDbConfigure": {
+    "EnableAutoMigration": false,
+    "ConnectionString": "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=DotNet_Dev;Integrated Security=True;Persist Security Info=False;MultipleActiveResultSets=True;;App=EntityFramework;"
+  }
+}

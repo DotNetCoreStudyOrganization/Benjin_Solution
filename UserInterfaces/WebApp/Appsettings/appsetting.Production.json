@@ -1,0 +1,6 @@
+﻿{
+  "MssqlDbConfigure": {
+    "EnableAutoMigration": true,
+    "ConnectionString": ";MultipleActiveResultSets=True;;App=EntityFramework;"
+  }
+}
