@@ -7,24 +7,19 @@
     {
         public static ContainerBuilder UseDataMssqlConfigure(this ContainerBuilder builder)
         {
-            var assembly = typeof(AutofacContainerBuilderExtension).Assembly;
+            // Register MainDbContext
+            builder.RegisterType<MainDbContext>().AsSelf().InstancePerLifetimeScope();
 
-            // EF
-            builder.RegisterAssemblyTypes(assembly)
-                .Where(m => m.Name.EndsWith("DbContext"))
-                .AsSelf()
-                .InstancePerLifetimeScope();
+            // Register UnitOfWork
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
 
-            // Repository
-            builder.RegisterAssemblyTypes(assembly)
-                .Where(m => m.Name.EndsWith("Repository"))
+            // Type of IRepository
+            var interfaceRepositoryType = typeof(IRepository<>);
+
+            // Register Repository
+            builder.RegisterAssemblyTypes(typeof(AutofacContainerBuilderExtension).Assembly)
+                .Where(m => m.GetInterface(interfaceRepositoryType.FullName) != null)
                 .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
-
-            // UnitOfWork
-            builder.RegisterAssemblyTypes(assembly)
-                .Where(m => m.Name.EndsWith(nameof(IUnitOfWork).Substring(1)))
-                .As<IUnitOfWork>()
                 .InstancePerLifetimeScope();
 
             return builder;

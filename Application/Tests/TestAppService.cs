@@ -25,7 +25,7 @@
 
         public IEnumerable<TestViewModel> GetAll()
         {
-            var entites = service.GetAll(m => m.Title != string.Empty);
+            var entites = service.GetAll(m => m.Title != string.Empty).ToList();
 
             return entites.Select(m => TestViewModel.Create(m));
         }

@@ -5,7 +5,7 @@
     using System.Linq.Expressions;
     using Domain.BaseModels;
 
-    public class TestService
+    public class TestService : IService
     {
         private readonly ITestRepository testRepository;
         private readonly IUnitOfWork unitOfWork;
