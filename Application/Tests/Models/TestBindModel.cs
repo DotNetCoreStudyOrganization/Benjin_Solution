@@ -31,7 +31,7 @@
         {
             public MappingProfile()
             {
-                CreateMap<Test, TestBindModel>();
+                CreateMap<TestBindModel, Test>();
             }
         }
     }
