@@ -40,9 +40,9 @@
         }
 
         [HttpPost]
-        public IHttpActionResult CreateOrUpdate(AppUser user, IEnumerable<AppRole> roles)
+        public IHttpActionResult CreateOrUpdate(UserBindModel model)
         {
-            appService.CreateOrUpdate(user, roles);
+            appService.CreateOrUpdate(model);
 
             return Ok();
         }

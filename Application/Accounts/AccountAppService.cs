@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Application.Accounts.Models;
     using Application.BaseModels;
@@ -36,9 +37,13 @@
             service.SignOut(owinContext);
         }
 
-        public void CreateOrUpdate(AppUser user, IEnumerable<AppRole> roles)
+        public void CreateOrUpdate(UserBindModel model)
         {
-            service.CreateOrUpdate(user, roles);
+            var user = service.UserMananger.Users.FirstOrDefault(m => m.Id == model.Id);
+
+            var entity = model.ToEntity(user, service.RoleMananger.Roles);
+
+            service.CreateOrUpdate(entity.user, entity.roles);
         }
 
         public PagedListModel<UserPagedModel> GetPagedList(int pageNumber, int pageSize, string search = default)
