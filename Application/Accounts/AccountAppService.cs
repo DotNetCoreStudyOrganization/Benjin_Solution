@@ -39,11 +39,11 @@
 
         public void CreateOrUpdate(UserBindModel model)
         {
-            var user = service.UserMananger.Users.FirstOrDefault(m => m.Id == model.Id);
+            var entity = service.UserMananger.Users.FirstOrDefault(m => m.Id == model.Id);
 
-            var entity = model.ToEntity(user, service.RoleMananger.Roles);
+            var (user, roles) = model.ToEntity(entity, service.RoleMananger.Roles);
 
-            service.CreateOrUpdate(entity.user, entity.roles);
+            service.CreateOrUpdate(user, roles);
         }
 
         public PagedListModel<UserPagedModel> GetPagedList(int pageNumber, int pageSize, string search = default)

@@ -7,6 +7,7 @@
     using Domain.BaseModels;
     using Domain.UserAccounts.AppRoles;
     using Domain.UserAccounts.AppUsers;
+    using Infrastructure.Exceptions;
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin;
     using X.PagedList;
@@ -53,24 +54,35 @@
 
         public void CreateOrUpdate(AppUser user, IEnumerable<AppRole> roles)
         {
-            var isExist = UserMananger.Users.Any(m => m.Id == user.Id);
+            var identityResult = default(IdentityResult);
 
-            if (isExist)
+            if (UserMananger.Users.Any(m => m.Id == user.Id))
             {
                 var oldRoleIds = user.Roles.Select(m => m.RoleId).ToList();
 
                 var oldRoles = RoleMananger.Roles.Where(m => oldRoleIds.Contains(m.Id));
 
-                UserMananger.RemoveFromRoles(user.Id, oldRoles.Select(m => m.Name).ToArray());
+                identityResult = UserMananger.RemoveFromRoles(user.Id, oldRoles.Select(m => m.Name).ToArray());
 
-                UserMananger.Create(user, AppUser.DefaultPassword);
+                if (identityResult.Succeeded)
+                {
+                    identityResult = UserMananger.Update(user);
+                }
             }
             else
             {
-                UserMananger.Update(user);
+                identityResult = UserMananger.Create(user, AppUser.DefaultPassword);
             }
 
-            UserMananger.AddToRoles(user.Id, roles.Select(m => m.Name).ToArray());
+            if (identityResult.Succeeded)
+            {
+                identityResult = UserMananger.AddToRoles(user.Id, roles.Select(m => m.Name).ToArray());
+            }
+
+            if (!identityResult.Succeeded)
+            {
+                throw new AppException(string.Join("\r\n", identityResult.Errors));
+            }
         }
 
         public IPagedList<AppUser> GetPagedList(int pageNumber, int pageSize, string search = default)
